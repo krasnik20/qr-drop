@@ -3,7 +3,6 @@ import { Box, Container, Stack, Typography } from "@mui/material";
 import { useTranslate } from "./i18n";
 import {
   appendMessage,
-  clearHostRoom,
   getHostRoomId,
   loadMessages,
   mergeChat,

@@ -114,9 +114,13 @@ export function FilePreviewDialog({
           </Stack>
         )}
         {!file.objectUrl && category !== "other" && (
-          <Stack
-            spacing={1}
-            alignItems="center"
+          <Box
+            sx={{
+              display: "flex",
+              flexDirection: "column",
+              alignItems: "center",
+              gap: 1,
+            }}
           >
             {!unavailable && (
               <CircularProgress
@@ -127,7 +131,7 @@ export function FilePreviewDialog({
             <Typography color="text.secondary">
               {t("file")}: {file.name} · {prettySize(file.size)}
             </Typography>
-          </Stack>
+          </Box>
         )}
         {unavailable && (
           <Typography

@@ -1,0 +1,7 @@
+.git
+.gitignore
+
+server/bin
+server/obj
+web/node_modules
+web/dist

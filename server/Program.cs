@@ -6,6 +6,8 @@ builder.Services.AddCors();
 builder.Services.AddSingleton<RoomRegistry>();
 var app = builder.Build();
 
+app.UseDefaultFiles();
+app.UseStaticFiles();
 app.UseWebSockets(new WebSocketOptions { KeepAliveInterval = TimeSpan.FromSeconds(20) });
 app.UseCors(policy => policy.AllowAnyHeader().AllowAnyMethod().SetIsOriginAllowed(_ => true));
 
@@ -34,4 +36,6 @@ app.Map("/ws", async (HttpContext ctx, RoomRegistry rooms) =>
     }
 });
 
-app.Run("http://localhost:5080");
+app.MapFallbackToFile("index.html");
+
+app.Run();
