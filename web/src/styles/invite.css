@@ -86,6 +86,27 @@
   text-transform: none !important;
 }
 
+.start-room-button {
+  min-height: 32px !important;
+  padding: 6px 12px !important;
+  border: 1px solid rgba(85, 214, 190, 0.42) !important;
+  border-radius: 999px !important;
+  color: #b5ffed !important;
+  background: rgba(85, 214, 190, 0.2) !important;
+  box-shadow: 0 8px 24px rgba(39, 180, 153, 0.2);
+  text-transform: none !important;
+  transition:
+    background 0.2s ease,
+    border-color 0.2s ease,
+    transform 0.2s ease !important;
+}
+
+.start-room-button:hover {
+  border-color: rgba(116, 255, 221, 0.72) !important;
+  background: rgba(85, 214, 190, 0.34) !important;
+  transform: translateY(-1px);
+}
+
 .status-chip {
   transition:
     background 0.25s ease,

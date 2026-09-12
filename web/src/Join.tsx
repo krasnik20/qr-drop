@@ -13,6 +13,7 @@ import { useTranslate } from "./i18n";
 import { ChatFeed } from "./components/ChatFeed";
 import { LanguageSelect } from "./components/LanguageSelect";
 import { StatusChip } from "./components/StatusChip";
+import { StartRoomButton } from "./components/StartRoomButton";
 
 export function Join() {
   const { roomId = "" } = useParams();
@@ -123,7 +124,15 @@ export function Join() {
   return (
     <Container maxWidth="md" className="page guest">
       <Stack spacing={3}>
-        <Box sx={{ display: "flex", justifyContent: "flex-end" }}>
+        <Box
+          sx={{
+            display: "flex",
+            justifyContent: "space-between",
+            alignItems: "center",
+            gap: 2,
+          }}
+        >
+          <StartRoomButton />
           <LanguageSelect />
         </Box>
         <Paper className="glass-card hero-card">
