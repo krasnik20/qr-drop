@@ -94,6 +94,39 @@ body {
   padding: 28px;
 }
 
+.mode-page,
+.receiver-page {
+  display: flex;
+  justify-content: center;
+}
+
+.mode-content {
+  width: min(760px, 100%);
+}
+
+.mode-card,
+.receiver-card {
+  padding: 28px;
+}
+
+.mode-button {
+  flex: 1;
+  min-height: 64px !important;
+  border: 1px solid rgba(255, 255, 255, 0.14) !important;
+  border-radius: 16px !important;
+  color: #e6e9f7 !important;
+  background: rgba(255, 255, 255, 0.07) !important;
+  text-transform: none !important;
+}
+
+.mode-button:hover {
+  background: rgba(139, 124, 255, 0.18) !important;
+}
+
+.receiver-card {
+  width: min(460px, 100%);
+}
+
 @media (max-width: 640px) {
   .page {
     padding: 28px 14px 56px;

@@ -5,7 +5,7 @@ export type TranslationKey = keyof typeof translations.en;
 
 const translations = {
   en: {
-    title: "QR Drop", lede: "Send text and files over a private peer-to-peer channel. No account, no noise.",
+    title: "QR Drop", lede: "Send text and files over a private peer-to-peer channel. No account, no noise.", chooseMode: "How do you want to use QR Drop?", howUse: "Choose a mode", hostMode: "Start a room and share", receiverMode: "Receive on this device", receiverTitle: "Connect this device", scanToHost: "Scan this code to start a room", back: "Back",
     invite: "Invite link", creating: "creating room…", roomOpen: "Room is open", watcherCount: "Number of watchers",
     newRoom: "New room", startRoom: "Start your own room", copy: "Copy link", copied: "Link copied", attach: "Attach file", send: "Send",
     write: "Write a message…", drop: "Drop files here", expand: "Expand message", emptyHost: "Nothing here yet — write a message or drop a file.", emptyGuest: "No messages yet",
@@ -14,7 +14,7 @@ const translations = {
     preview: "Preview", file: "File", image: "Image", audio: "Audio", video: "Video", other: "File", filename: "Name", extension: "Extension", size: "Size",
   },
   ru: {
-    title: "QR Drop", lede: "Отправляйте текст и файлы по приватному peer-to-peer каналу. Без аккаунта и лишнего шума.",
+    title: "QR Drop", lede: "Отправляйте текст и файлы по приватному peer-to-peer каналу. Без аккаунта и лишнего шума.", chooseMode: "Как вы хотите использовать QR Drop?", howUse: "Выберите режим", hostMode: "Создать комнату и делиться", receiverMode: "Принимать на этом устройстве", receiverTitle: "Подключить это устройство", scanToHost: "Отсканируйте код, чтобы создать комнату", back: "Назад",
     invite: "Ссылка для приглашения", creating: "создаём комнату…", roomOpen: "Комната открыта", watcherCount: "Кол-во зрителей",
     newRoom: "Новая комната", startRoom: "Начать свою комнату", copy: "Копировать ссылку", copied: "Ссылка скопирована", attach: "Прикрепить файл", send: "Отправить",
     write: "Напишите сообщение…",
@@ -27,7 +27,7 @@ const translations = {
     preview: "Предпросмотр", file: "Файл", image: "Изображение", audio: "Аудио", video: "Видео", other: "Файл", filename: "Название", extension: "Расширение", size: "Размер",
   },
   sr: {
-    title: "QR Drop", lede: "Šaljite tekst i fajlove privatnim peer-to-peer kanalom. Bez naloga i suvišne buke.",
+    title: "QR Drop", lede: "Šaljite tekst i fajlove privatnim peer-to-peer kanalom. Bez naloga i suvišne buke.", chooseMode: "Kako želite da koristite QR Drop?", howUse: "Izaberite režim", hostMode: "Pokreni sobu i deli", receiverMode: "Prikazuj na ovom uređaju", receiverTitle: "Povežite ovaj uređaj", scanToHost: "Skenirajte kod da pokrenete sobu", back: "Nazad",
     invite: "Link za poziv", creating: "kreiranje sobe…", roomOpen: "Soba je otvorena", watcherCount: "Broj gledaoca",
     newRoom: "Nova soba", startRoom: "Pokreni svoju sobu", copy: "Kopiraj link", copied: "Link je kopiran", attach: "Dodaj fajl", send: "Pošalji",
     write: "Napišite poruku…",

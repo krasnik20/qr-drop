@@ -23,7 +23,7 @@ internal sealed class RoomRegistry()
             try
             {
                 var msg = JsonNode.Parse(text) as JsonObject ?? throw new JsonException("Expected object");
-                
+
                 switch (msg["type"]?.GetValue<string>())
                 {
                     case "hello": await HelloAsync(peer, msg); break;
@@ -146,6 +146,12 @@ internal sealed class RoomRegistry()
         }
         throw new InvalidOperationException("could not allocate room id");
     }
+
+    public string CreatePairingRoom() => CreateRoom().Id;
+
+    public bool IsHostOnline(string roomId) =>
+        _rooms.TryGetValue(roomId, out var room) &&
+        room.Host is { Socket.State: WebSocketState.Open };
 
     private static JsonObject Err(string code) => new() { ["type"] = "error", ["code"] = code };
 

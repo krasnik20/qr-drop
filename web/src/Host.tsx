@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import { Box, Container, Stack, Typography } from "@mui/material";
 import { useTranslate } from "./i18n";
+import { useParams } from "react-router-dom";
 import {
   appendMessage,
   getHostRoomId,
@@ -33,8 +34,11 @@ type PeerLink = { pc: RTCPeerConnection; dc: RTCDataChannel };
 type FileMessage = Extract<ChatMessage, { kind: "file" }>;
 
 export function Host() {
+  const { roomId: requestedRoomId } = useParams();
   const t = useTranslate();
-  const [roomId, setRoomId] = useState<string | null>(getHostRoomId() ?? null);
+  const [roomId, setRoomId] = useState<string | null>(
+    requestedRoomId ?? getHostRoomId() ?? null,
+  );
   const [status, setStatus] = useState("connecting");
   const [guests, setGuests] = useState(0);
   const [messages, setMessages] = useState<ChatMessage[]>(() => roomId ? loadMessages(roomId) : []);
@@ -45,7 +49,7 @@ export function Host() {
   roomRef.current = roomId;
 
   useEffect(() => {
-    const saved = getHostRoomId();
+    const saved = requestedRoomId ?? getHostRoomId();
     const signaling = connectSignaling((message) => void handleServerMessage(message));
     signaling.send({ type: "hello", role: "host", room: saved ?? null });
 
@@ -114,7 +118,7 @@ export function Host() {
       signaling.close();
       for (const id of peersRef.current.keys()) dropPeer(id);
     };
-  }, []);
+  }, [requestedRoomId]);
 
   function pushMessage(message: ChatMessage) {
     if (!roomId) return;

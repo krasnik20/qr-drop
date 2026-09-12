@@ -12,6 +12,10 @@ app.UseWebSockets(new WebSocketOptions { KeepAliveInterval = TimeSpan.FromSecond
 app.UseCors(policy => policy.AllowAnyHeader().AllowAnyMethod().SetIsOriginAllowed(_ => true));
 
 app.MapGet("/api/health", () => Results.Ok(new { ok = true }));
+app.MapPost("/api/rooms/pair", (RoomRegistry rooms) =>
+    Results.Ok(new { room = rooms.CreatePairingRoom() }));
+app.MapGet("/api/rooms/{roomId}/status", (string roomId, RoomRegistry rooms) =>
+    Results.Ok(new { hostOnline = rooms.IsHostOnline(roomId) }));
 app.Map("/ws", async (HttpContext ctx, RoomRegistry rooms) =>
 {
     if (!ctx.WebSockets.IsWebSocketRequest)

@@ -3,6 +3,8 @@ import { createTheme, CssBaseline, ThemeProvider } from "@mui/material";
 import { Host } from "./Host";
 import { Join } from "./Join";
 import { LanguageProvider } from "./i18n";
+import { ModeSelect } from "./components/ModeSelect";
+import { ReceiverPage } from "./components/ReceiverPage";
 
 const theme = createTheme({
   palette: {
@@ -26,7 +28,10 @@ export function App() {
       <LanguageProvider>
         <BrowserRouter>
           <Routes>
-            <Route path="/" element={<Host />} />
+            <Route path="/" element={<ModeSelect />} />
+            <Route path="/host" element={<Host />} />
+            <Route path="/host/:roomId" element={<Host />} />
+            <Route path="/receive/:roomId" element={<ReceiverPage />} />
             <Route path="/:roomId" element={<Join />} />
           </Routes>
         </BrowserRouter>
