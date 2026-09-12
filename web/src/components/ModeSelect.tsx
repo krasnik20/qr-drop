@@ -2,6 +2,7 @@ import { Tv, Upload } from "@mui/icons-material";
 import { Box, Button, Paper, Stack, Typography } from "@mui/material";
 import { useNavigate } from "react-router-dom";
 import { useTranslate } from "../i18n";
+import { LanguageSelect } from "./LanguageSelect";
 
 export function ModeSelect() {
   const navigate = useNavigate();
@@ -14,7 +15,17 @@ export function ModeSelect() {
         spacing={3}
       >
         <Box className="hero">
-          <Typography variant="h1">{t("title")}</Typography>
+          <Box
+            className="hero-heading"
+            sx={{
+              display: "flex",
+              justifyContent: "space-between",
+              alignItems: "center",
+            }}
+          >
+            <Typography variant="h1">{t("title")}</Typography>
+            <LanguageSelect />
+          </Box>
           <Typography className="lede">{t("chooseMode")}</Typography>
         </Box>
         <Paper className="glass-card mode-card">
