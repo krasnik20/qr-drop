@@ -1,0 +1,111 @@
+.composer {
+  position: relative;
+  padding: 0;
+  transition:
+    min-height 0.28s ease,
+    background 0.28s ease;
+}
+
+.composer-form {
+  display: flex;
+  gap: 12px;
+  align-items: flex-end;
+  padding: 4px;
+}
+
+.attach-button {
+  flex: 0 0 44px !important;
+  width: 44px !important;
+  min-width: 44px !important;
+  height: 44px !important;
+  margin: 0 0 6px !important;
+  border-radius: 50% !important;
+  transition: background 0.2s ease;
+}
+
+.message-field-wrap {
+  position: relative;
+  flex: 1;
+  min-width: 0;
+}
+
+.message-field-wrap .message-field {
+  display: block;
+}
+
+.message-field .MuiOutlinedInput-root {
+  border-radius: 22px;
+  background: rgba(34, 40, 64, 0.66);
+  backdrop-filter: blur(18px);
+  transition:
+    background 0.25s ease,
+    box-shadow 0.25s ease;
+}
+
+.message-field .MuiOutlinedInput-root:focus-within {
+  background: rgba(43, 50, 80, 0.82);
+  box-shadow: 0 0 0 3px rgba(139, 124, 255, 0.14);
+}
+
+.message-field-wrap .MuiOutlinedInput-root {
+  padding-right: 54px;
+}
+
+.message-actions {
+  display: flex;
+  flex-direction: column;
+  align-self: stretch;
+  justify-content: space-between;
+  padding: 4px 0;
+}
+
+.message-actions .MuiIconButton-root {
+  animation: pop-in 0.2s ease both;
+  transition:
+    transform 0.2s ease,
+    opacity 0.2s ease;
+}
+
+.send-button-wrap {
+  position: absolute;
+  right: 10px;
+  bottom: 9px;
+  z-index: 2;
+  display: block;
+  width: 38px;
+  height: 38px;
+  opacity: 0;
+  pointer-events: none;
+  transform: scale(0.72);
+  transition:
+    opacity 0.2s ease,
+    transform 0.2s cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+
+.send-button-wrap.is-visible {
+  opacity: 1;
+  pointer-events: auto;
+  transform: scale(1);
+}
+
+.send-button {
+  width: 38px !important;
+  height: 38px !important;
+}
+
+.expanded .message-field .MuiOutlinedInput-root {
+  min-height: calc(100vh - 180px);
+  align-items: flex-start;
+}
+
+@media (max-width: 640px) {
+  .composer-form {
+    gap: 8px;
+  }
+
+  .attach-button {
+    flex-basis: 40px !important;
+    width: 40px !important;
+    min-width: 40px !important;
+  }
+}

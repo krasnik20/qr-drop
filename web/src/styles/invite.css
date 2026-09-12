@@ -1,0 +1,116 @@
+.invite-card {
+  display: flex;
+  gap: 32px;
+  align-items: center;
+  padding: 24px;
+}
+
+.invite-content {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.qr-column {
+  display: flex;
+  flex: 0 0 auto;
+  flex-direction: column;
+  gap: 10px;
+  align-items: center;
+}
+
+.qr-wrap {
+  flex: 0 0 auto;
+  padding: 16px 16px 8px 16px;
+  border-radius: 18px;
+  color: #111426;
+  background: rgba(255, 255, 255, 0.95);
+  text-align: center;
+}
+
+.room-code {
+  font-family: ui-monospace, SFMono-Regular, Menlo, monospace !important;
+  letter-spacing: 0.04em;
+}
+
+.invite-url {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  justify-content: space-between;
+  overflow-wrap: anywhere;
+  padding: 14px;
+  border-radius: 12px;
+  color: #cdd2e8;
+  background: rgba(0, 0, 0, 0.22);
+  cursor: copy;
+  font-family: ui-monospace, monospace;
+  font-size: 0.8rem;
+}
+
+.room-meta {
+  display: flex;
+  align-items: flex-start;
+}
+
+.room-actions {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  align-items: center;
+}
+
+.liquid-control {
+  height: 32px !important;
+  min-height: 32px !important;
+  box-sizing: border-box !important;
+  border: 1px solid rgba(255, 255, 255, 0.12) !important;
+  background: rgba(255, 255, 255, 0.08) !important;
+  backdrop-filter: blur(16px);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.16);
+  transition:
+    background 0.2s ease,
+    border-color 0.2s ease,
+    transform 0.2s ease !important;
+}
+
+.liquid-control:hover {
+  border-color: rgba(139, 124, 255, 0.45) !important;
+  background: rgba(139, 124, 255, 0.18) !important;
+  transform: translateY(-1px);
+}
+
+.new-room-button {
+  padding: 6px 12px !important;
+  border-radius: 999px !important;
+  text-transform: none !important;
+}
+
+.status-chip {
+  transition:
+    background 0.25s ease,
+    color 0.25s ease;
+}
+
+.status-open {
+  border: 1px solid rgba(85, 214, 190, 0.3);
+  color: #9af0df !important;
+  background: rgba(85, 214, 190, 0.07) !important;
+}
+
+.status-pending {
+  border: 1px solid rgba(255, 193, 92, 0.26);
+  color: #ffe0a0 !important;
+  background: rgba(255, 193, 92, 0.06) !important;
+}
+
+@media (max-width: 640px) {
+  .invite-card {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .qr-column {
+    align-self: center;
+  }
+}
