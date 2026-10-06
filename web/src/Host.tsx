@@ -4,6 +4,7 @@ import { useTranslate } from "./i18n";
 import { useParams } from "react-router-dom";
 import {
   appendMessage,
+  clearRoomMessages,
   getHostRoomId,
   loadMessages,
   mergeChat,
@@ -24,6 +25,7 @@ import {
   sendFile,
   sendFileAvailable,
   sendText,
+  type WireMsg,
 } from "./webrtc";
 import { ChatFeed } from "./components/ChatFeed";
 import { InviteCard } from "./components/InviteCard";
@@ -90,6 +92,19 @@ export function Host() {
               const at = fileTimesRef.current.get(id);
               if (file && at) void sendFile([channel], id, file, at);
             },
+            (wireMessage) => {
+              if (wireMessage.type !== "text") return;
+              const room = roomRef.current;
+              if (!room) return;
+              const message: ChatMessage = {
+                id: wireMessage.id,
+                kind: "text",
+                text: wireMessage.text,
+                at: wireMessage.at,
+              };
+              appendMessage(room, "host", message);
+              setMessages((previous) => mergeChat(previous, message));
+            },
           );
           peersRef.current.set(message.peerId, { pc, dc });
           setGuests(peersRef.current.size);
@@ -126,6 +141,19 @@ export function Host() {
     setMessages((previous) => mergeChat(previous, message));
   }
 
+  function clearChat() {
+    if (!roomId) return;
+    clearRoomMessages(roomId);
+    setMessages([]);
+    filesRef.current.clear();
+    fileTimesRef.current.clear();
+    for (const peer of peersRef.current.values()) {
+      if (peer.dc.readyState !== "open") continue;
+      const wire: WireMsg = { type: "chat-clear" };
+      peer.dc.send(JSON.stringify(wire));
+    }
+  }
+
   async function sendMessage(text: string) {
     if (!text || status === "hostTaken") return;
     const message: ChatMessage = { id: newId(), kind: "text", text, at: Date.now() };
@@ -155,19 +183,19 @@ export function Host() {
   }
 
   return (
-    <Container maxWidth="md" className="page">
+    <Container maxWidth="md" className="page chat-page">
       <Stack spacing={3}>
         <Box className="hero">
           <Box className="hero-heading" sx={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
             <Typography variant="h1">{t("title")}</Typography>
             <LanguageSelect />
           </Box>
-          <Typography className="lede">{t("lede")}</Typography>
         </Box>
         <InviteCard
           roomId={roomId}
           status={status}
           guests={guests}
+          onClearChat={clearChat}
         />
         <ChatFeed
           messages={messages}

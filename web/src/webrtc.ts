@@ -10,6 +10,7 @@ const iceWait = new WeakMap<RTCPeerConnection, RTCIceCandidateInit[]>();
 
 export type WireMsg =
   | { type: "text"; id: string; text: string; at: number }
+  | { type: "chat-clear" }
   | { type: "file-available"; id: string; name: string; size: number; mime: string; at: number }
   | { type: "file-request"; id: string }
   | { type: "file-start"; id: string; name: string; size: number; mime: string; at: number }
@@ -27,6 +28,7 @@ export function createHostPeer(
   onLocalSignal: (payload: SignalPayload) => void,
   onOpen: () => void,
   onFileRequest: (id: string, dc: RTCDataChannel) => void,
+  onChatEvent?: (message: WireMsg, dc: RTCDataChannel) => void,
 ) {
   const pc = new RTCPeerConnection(ICE);
   const dc = pc.createDataChannel("drop", { ordered: true });
@@ -37,6 +39,7 @@ export function createHostPeer(
     if (typeof event.data !== "string") return;
     const message = JSON.parse(event.data) as WireMsg;
     if (message.type === "file-request") onFileRequest(message.id, dc);
+    else onChatEvent?.(message, dc);
   });
   pc.addEventListener("icecandidate", (e) => {
     if (e.candidate) onLocalSignal({ ice: e.candidate.toJSON() });
@@ -189,9 +192,15 @@ export function consumeGuestMessage(
   state: { current?: { id: string; name: string; size: number; mime: string; at: number; parts: ArrayBuffer[] } },
   onChat: (m: ChatMessage) => void,
   onProgress?: (id: string, progress: number) => void,
+  onClear?: () => void,
 ) {
   if (typeof ev.data === "string") {
     const msg = JSON.parse(ev.data) as WireMsg;
+    if (msg.type === "chat-clear") {
+      state.current = undefined;
+      onClear?.();
+      return;
+    }
     if (msg.type === "text") {
       onChat({ id: msg.id, kind: "text", text: msg.text, at: msg.at });
     } else if (msg.type === "file-available") {

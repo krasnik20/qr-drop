@@ -1,4 +1,4 @@
-import { Download } from "@mui/icons-material";
+import { Download, Check, ContentCopy } from "@mui/icons-material";
 import {
   Box,
   CircularProgress,
@@ -9,12 +9,14 @@ import {
   Tooltip,
   Typography,
 } from "@mui/material";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useTranslate } from "../i18n";
 import type { ChatMessage } from "../storage";
 import { FileIcon } from "./FileIcon";
 import { FilePreviewDialog } from "./FilePreviewDialog";
 import { fileCategory, prettySize, type FileMessage } from "./fileTypes";
+
+const SCROLL_STICK_OFFSET = 240;
 
 type ChatFeedProps = {
   messages: ChatMessage[];
@@ -32,6 +34,29 @@ export function ChatFeed({
   filesDisabled = false,
 }: ChatFeedProps) {
   const t = useTranslate();
+  const previousCountRef = useRef(0);
+
+  useEffect(() => {
+    window.scrollTo({ top: document.documentElement.scrollHeight });
+  }, []);
+
+  useEffect(() => {
+    const count = messages.length;
+    if (!count) return;
+    const previousCount = previousCountRef.current;
+    previousCountRef.current = count;
+    if (previousCount >= count) return;
+    const stickToBottom =
+      window.innerHeight + window.scrollY >=
+      document.documentElement.scrollHeight - SCROLL_STICK_OFFSET;
+    if (!mine && !stickToBottom) return;
+    const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    window.scrollTo({
+      top: document.documentElement.scrollHeight,
+      behavior: reduceMotion ? "auto" : "smooth",
+    });
+  }, [messages.length, mine]);
+
   if (!messages.length) {
     return (
       <Paper className="glass-card empty">
@@ -60,7 +85,9 @@ export function ChatFeed({
             })}
           </Typography>
           {message.kind === "text" ? (
-            <Typography>{renderText(message.text)}</Typography>
+            <CopyMessageButton text={message.text}>
+              <Typography>{renderText(message.text)}</Typography>
+            </CopyMessageButton>
           ) : (
             <FileBubble
               message={message}
@@ -72,6 +99,53 @@ export function ChatFeed({
         </Paper>
       ))}
     </Stack>
+  );
+}
+
+function CopyMessageButton({ text, children }: { text: string; children: React.ReactNode }) {
+  const t = useTranslate();
+  const [copied, setCopied] = useState(false);
+
+  useEffect(() => {
+    if (!copied) return;
+    const timeout = window.setTimeout(() => setCopied(false), 1600);
+    return () => window.clearTimeout(timeout);
+  }, [copied]);
+
+  function copy() {
+    const clipboard = navigator.clipboard;
+    if (clipboard) {
+      void clipboard.writeText(text).catch(() => {});
+    } else {
+      const area = document.createElement("textarea");
+      area.value = text;
+      area.style.position = "fixed";
+      area.style.opacity = "0";
+      document.body.appendChild(area);
+      area.select();
+      document.execCommand("copy");
+      area.remove();
+    }
+    setCopied(true);
+  }
+
+  return (
+    <>
+      <Tooltip title={copied ? t("copiedMsg") : t("copyMsg")}>
+        <IconButton
+          className="message-copy"
+          size="small"
+          aria-label={t("copyMsg")}
+          onClick={(event) => {
+            event.stopPropagation();
+            copy();
+          }}
+        >
+          {copied ? <Check fontSize="small" /> : <ContentCopy fontSize="small" />}
+        </IconButton>
+      </Tooltip>
+      {children}
+    </>
   );
 }
 
@@ -101,7 +175,7 @@ function renderText(text: string) {
           {punctuation}
         </span>
       );
-  });
+    });
 }
 
 function FileBubble({

@@ -1,8 +1,48 @@
 .message {
+  position: relative;
   max-width: 82%;
   padding: 12px 16px;
   border-radius: 18px !important;
   animation: message-in 0.3s ease both;
+}
+
+.message-copy {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%) scale(0.88);
+  opacity: 0;
+  pointer-events: none;
+  transition:
+    opacity 0.18s ease,
+    transform 0.18s ease,
+    background-color 0.2s ease;
+}
+
+.message.mine .message-copy {
+  right: calc(100% + 8px);
+}
+
+.message:not(.mine) .message-copy {
+  left: calc(100% + 8px);
+}
+
+.message:hover .message-copy,
+.message-copy:focus-visible {
+  opacity: 1;
+  pointer-events: auto;
+  transform: translateY(-50%) scale(1);
+}
+
+@media (hover: none) {
+  .message-copy {
+    opacity: 0.65;
+    pointer-events: auto;
+    transform: translateY(-50%) scale(1);
+  }
+
+  .message {
+    max-width: calc(100% - 36px);
+  }
 }
 
 .message.mine {

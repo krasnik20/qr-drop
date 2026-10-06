@@ -26,6 +26,10 @@ body {
   padding: 48px 20px 80px;
 }
 
+.chat-page {
+  padding-bottom: 16px;
+}
+
 .hero {
   display: flex;
   flex-direction: column;
@@ -130,5 +134,9 @@ body {
 @media (max-width: 640px) {
   .page {
     padding: 28px 14px 56px;
+  }
+
+  .chat-page {
+    padding-bottom: 12px;
   }
 }

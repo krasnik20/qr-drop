@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import { Box, Container, Paper, Stack, Typography } from "@mui/material";
 import { useParams } from "react-router-dom";
-import { appendMessage, loadMessages, mergeChat, type ChatMessage } from "./storage";
+import { appendMessage, clearRoomMessages, loadMessages, mergeChat, type ChatMessage } from "./storage";
 import { connectSignaling, type ServerMsg } from "./signaling";
 import {
   applySignal,
@@ -12,6 +12,7 @@ import {
 import { useTranslate } from "./i18n";
 import { ChatFeed } from "./components/ChatFeed";
 import { LanguageSelect } from "./components/LanguageSelect";
+import { MessageComposer } from "./components/MessageComposer";
 import { StatusChip } from "./components/StatusChip";
 import { StartRoomButton } from "./components/StartRoomButton";
 
@@ -59,6 +60,10 @@ export function Join() {
                 ...previous,
                 [id]: progress,
               })),
+            () => {
+              clearRoomMessages(connectionRoomId);
+              setMessages([]);
+            },
           ),
         () => setStatus("channel"),
         (channel) => {
@@ -122,7 +127,7 @@ export function Join() {
   }
 
   return (
-    <Container maxWidth="md" className="page guest">
+    <Container maxWidth="md" className="page guest chat-page">
       <Stack spacing={3}>
         <Box
           sx={{
@@ -155,6 +160,12 @@ export function Join() {
           onFileRequest={requestFile}
           fileProgress={fileProgress}
           filesDisabled={status !== "channel"}
+        />
+        <MessageComposer
+          disabled
+          placeholder={t("composerBlocked")}
+          onSend={() => {}}
+          onFiles={() => {}}
         />
       </Stack>
     </Container>
