@@ -84,6 +84,14 @@ export function appendMessage(roomId: string, role: Role, message: ChatMessage) 
   save(store);
 }
 
+export function clearRoomMessages(roomId: string) {
+  const store = load();
+  const room = store.rooms[roomId];
+  if (!room) return;
+  room.messages = [];
+  save(store);
+}
+
 export function mergeChat(prev: ChatMessage[], message: ChatMessage): ChatMessage[] {
   const i = prev.findIndex((m) => m.id === message.id);
   if (i === -1) return [...prev, message];

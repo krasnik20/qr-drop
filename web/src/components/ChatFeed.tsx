@@ -1,4 +1,4 @@
-import { Download } from "@mui/icons-material";
+import { Download, Check, ContentCopy } from "@mui/icons-material";
 import {
   Box,
   CircularProgress,
@@ -9,12 +9,14 @@ import {
   Tooltip,
   Typography,
 } from "@mui/material";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useTranslate } from "../i18n";
 import type { ChatMessage } from "../storage";
 import { FileIcon } from "./FileIcon";
 import { FilePreviewDialog } from "./FilePreviewDialog";
 import { fileCategory, prettySize, type FileMessage } from "./fileTypes";
+
+const SCROLL_STICK_OFFSET = 240;
 
 type ChatFeedProps = {
   messages: ChatMessage[];
@@ -32,6 +34,33 @@ export function ChatFeed({
   filesDisabled = false,
 }: ChatFeedProps) {
   const t = useTranslate();
+  const previousCountRef = useRef(0);
+  const scrollRef = useRef<HTMLDivElement | null>(null);
+
+  useEffect(() => {
+    const el = scrollRef.current;
+    if (!el) return;
+    el.scrollTo({ top: el.scrollHeight });
+  }, []);
+
+  useEffect(() => {
+    const count = messages.length;
+    if (!count) return;
+    const previousCount = previousCountRef.current;
+    previousCountRef.current = count;
+    if (previousCount >= count) return;
+    const el = scrollRef.current;
+    if (!el) return;
+    const stickToBottom =
+      el.scrollTop + el.clientHeight >= el.scrollHeight - SCROLL_STICK_OFFSET;
+    if (!mine && !stickToBottom) return;
+    const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    el.scrollTo({
+      top: el.scrollHeight,
+      behavior: reduceMotion ? "auto" : "smooth",
+    });
+  }, [messages.length, mine]);
+
   if (!messages.length) {
     return (
       <Paper className="glass-card empty">
@@ -42,36 +71,87 @@ export function ChatFeed({
     );
   }
   return (
-    <Stack className="feed" spacing={1.5}>
-      {messages.map((message) => (
-        <Paper
-          key={message.id}
-          className={`message ${mine ? "mine" : ""}`}
-        >
-          <Typography
-            className="message-time"
-            variant="caption"
-            color="text.secondary"
+    <Box ref={scrollRef} className="chat-scroll">
+      <Stack className="feed" spacing={1.5}>
+        {messages.map((message) => (
+          <Box
+            key={message.id}
+            className={`message-row ${mine ? "mine" : ""}`}
           >
-            {new Date(message.at).toLocaleTimeString([], {
-              hour: "2-digit",
-              minute: "2-digit",
-              hour12: false,
-            })}
-          </Typography>
-          {message.kind === "text" ? (
-            <Typography>{renderText(message.text)}</Typography>
-          ) : (
-            <FileBubble
-              message={message}
-              onRequest={onFileRequest}
-              progress={fileProgress?.[message.id]}
-              disabled={filesDisabled}
-            />
-          )}
-        </Paper>
-      ))}
-    </Stack>
+            {mine && message.kind === "text" && (
+              <CopyMessageButton text={message.text} />
+            )}
+            <Paper className={`message ${mine ? "mine" : ""}`}>
+              <Typography
+                className="message-time"
+                variant="caption"
+                color="text.secondary"
+              >
+                {new Date(message.at).toLocaleTimeString([], {
+                  hour: "2-digit",
+                  minute: "2-digit",
+                  hour12: false,
+                })}
+              </Typography>
+              {message.kind === "text" ? (
+                <Typography>{renderText(message.text)}</Typography>
+              ) : (
+                <FileBubble
+                  message={message}
+                  onRequest={onFileRequest}
+                  progress={fileProgress?.[message.id]}
+                  disabled={filesDisabled}
+                />
+              )}
+            </Paper>
+            {!mine && message.kind === "text" && (
+              <CopyMessageButton text={message.text} />
+            )}
+          </Box>
+        ))}
+      </Stack>
+    </Box>
+  );
+}
+
+function CopyMessageButton({ text }: { text: string }) {
+  const t = useTranslate();
+  const [copied, setCopied] = useState(false);
+
+  useEffect(() => {
+    if (!copied) return;
+    const timeout = window.setTimeout(() => setCopied(false), 1600);
+    return () => window.clearTimeout(timeout);
+  }, [copied]);
+
+  function copy() {
+    const clipboard = navigator.clipboard;
+    if (clipboard) {
+      void clipboard.writeText(text).catch(() => {});
+    } else {
+      const area = document.createElement("textarea");
+      area.value = text;
+      area.style.position = "fixed";
+      area.style.opacity = "0";
+      document.body.appendChild(area);
+      area.select();
+      document.execCommand("copy");
+      area.remove();
+    }
+    setCopied(true);
+  }
+
+  return (
+    <IconButton
+      className="message-copy"
+      aria-label={t("copyMsg")}
+      onClick={(event) => {
+        event.stopPropagation();
+        copy();
+      }}
+    >
+      {copied ? <Check /> : <ContentCopy />}
+    </IconButton>
   );
 }
 
@@ -101,7 +181,7 @@ function renderText(text: string) {
           {punctuation}
         </span>
       );
-  });
+    });
 }
 
 function FileBubble({

@@ -1,22 +1,31 @@
 .invite-card {
   display: flex;
-  gap: 32px;
+  flex-direction: column;
+  gap: 16px;
   align-items: center;
-  padding: 24px;
+  padding: 18px 20px 20px;
 }
 
-.invite-content {
+.invite-top {
+  width: 100%;
   display: flex;
-  flex-direction: column;
-  gap: 12px;
+  gap: 8px;
+  align-items: center;
+  justify-content: space-between;
 }
 
-.qr-column {
-  display: flex;
-  flex: 0 0 auto;
-  flex-direction: column;
-  gap: 10px;
-  align-items: center;
+.invite-collapse {
+  width: 32px;
+  height: 32px;
+  border-radius: 999px !important;
+  transition:
+    background 0.2s ease,
+    transform 0.2s ease !important;
+}
+
+.invite-collapse:hover {
+  background: rgba(139, 124, 255, 0.18) !important;
+  transform: translateY(-1px);
 }
 
 .qr-column-content {
@@ -55,16 +64,12 @@
   font-size: 0.8rem;
 }
 
-.room-meta {
-  display: flex;
-  align-items: flex-start;
-}
-
 .room-actions {
   display: flex;
   gap: 8px;
   flex-wrap: wrap;
   align-items: center;
+  justify-content: center;
 }
 
 .liquid-control {
@@ -91,6 +96,18 @@
   padding: 6px 12px !important;
   border-radius: 999px !important;
   text-transform: none !important;
+}
+
+.clear-chat-button {
+  width: 32px;
+  height: 32px;
+  border-radius: 999px !important;
+  color: rgba(238, 240, 250, 0.85) !important;
+}
+
+.clear-chat-button:hover {
+  border-color: rgba(255, 99, 112, 0.45) !important;
+  background: rgba(255, 99, 112, 0.16) !important;
 }
 
 .start-room-button {
@@ -134,11 +151,7 @@
 
 @media (max-width: 640px) {
   .invite-card {
-    flex-direction: column;
-    align-items: stretch;
-  }
-
-  .qr-column {
-    align-self: center;
+    gap: 12px;
+    padding: 14px 14px 16px;
   }
 }

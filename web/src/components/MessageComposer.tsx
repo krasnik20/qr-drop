@@ -1,4 +1,4 @@
-import { FormEvent, useEffect, useRef, useState } from "react";
+import { FormEvent, useEffect, useRef, useState, type KeyboardEvent as ReactKeyboardEvent } from "react";
 import { AttachFile, OpenInFull, Send } from "@mui/icons-material";
 import { Box, IconButton, InputAdornment, TextField, Tooltip } from "@mui/material";
 import { useTranslate } from "../i18n";
@@ -7,12 +7,14 @@ type MessageComposerProps = {
   onSend: (text: string) => void;
   onFiles: (files: FileList | File[]) => void;
   disabled?: boolean;
+  placeholder?: string;
 };
 
 export function MessageComposer({
   onSend,
   onFiles,
   disabled = false,
+  placeholder,
 }: MessageComposerProps) {
   const t = useTranslate();
   const [draft, setDraft] = useState("");
@@ -22,6 +24,7 @@ export function MessageComposer({
   onFilesRef.current = onFiles;
 
   useEffect(() => {
+    if (disabled) return;
     const onDragOver = (event: DragEvent) => {
       event.preventDefault();
       if (event.dataTransfer?.types.includes("Files")) setDragging(true);
@@ -29,9 +32,7 @@ export function MessageComposer({
     const onDrop = (event: DragEvent) => {
       event.preventDefault();
       setDragging(false);
-      if (!disabled && event.dataTransfer?.files.length) {
-        onFilesRef.current(event.dataTransfer.files);
-      }
+      if (event.dataTransfer?.files.length) onFilesRef.current(event.dataTransfer.files);
     };
     const onDragLeave = (event: DragEvent) => {
       if (!event.relatedTarget) setDragging(false);
@@ -49,6 +50,21 @@ export function MessageComposer({
     };
   }, [disabled]);
 
+  function submitText() {
+    if (disabled) return;
+    const text = draft.trim();
+    if (!text) return;
+    onSend(text);
+    setDraft("");
+  }
+
+  function onKeyDown(event: ReactKeyboardEvent<HTMLElement>) {
+    if (event.key !== "Enter" || event.shiftKey || event.nativeEvent.isComposing) return;
+    if ((event.target as HTMLElement | null)?.tagName !== "TEXTAREA") return;
+    event.preventDefault();
+    submitText();
+  }
+
   return (
     <>
       {dragging && !disabled && (
@@ -57,11 +73,10 @@ export function MessageComposer({
       <Box className={`composer ${expanded ? "expanded" : ""}`}>
         <form
           className="composer-form"
+          onKeyDown={onKeyDown}
           onSubmit={(event: FormEvent) => {
             event.preventDefault();
-            if (disabled) return;
-            onSend(draft.trim());
-            setDraft("");
+            submitText();
           }}
         >
           <Tooltip title={t("attach")}>
@@ -92,7 +107,7 @@ export function MessageComposer({
               maxRows={expanded ? undefined : 10}
               value={draft}
               onChange={(event) => setDraft(event.target.value)}
-              placeholder={t("write")}
+              placeholder={placeholder ?? t("write")}
               disabled={disabled}
               slotProps={{
                 input: {

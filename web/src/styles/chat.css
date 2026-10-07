@@ -1,12 +1,41 @@
+.message-row {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+}
+
+.message-row.mine {
+  justify-content: flex-end;
+}
+
 .message {
   max-width: 82%;
   padding: 12px 16px;
   border-radius: 18px !important;
+  overflow-wrap: anywhere;
   animation: message-in 0.3s ease both;
 }
 
+.message-copy {
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.18s ease;
+}
+
+.message-row:hover .message-copy,
+.message-copy:focus-visible {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+@media (hover: none) {
+  .message-copy {
+    opacity: 0.65;
+    pointer-events: auto;
+  }
+}
+
 .message.mine {
-  margin-left: auto;
   border-bottom-right-radius: 5px !important;
   background: linear-gradient(
     135deg,

@@ -26,11 +26,54 @@ body {
   padding: 48px 20px 80px;
 }
 
+.chat-page {
+  height: 100vh;
+  height: 100dvh;
+  display: flex;
+  flex-direction: column;
+  position: relative;
+  overflow: hidden;
+  padding: 12px 20px 0;
+}
+
+.chat-page > .MuiStack-root {
+  flex: 1;
+  min-height: 0;
+}
+
+.chat-scroll {
+  flex: 1;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  scrollbar-width: none;
+  margin-top: -48px !important;
+  padding-top: 64px;
+  padding-bottom: 106px;
+}
+
+.chat-scroll .feed {
+  margin-top: auto;
+}
+
+.chat-page .composer {
+  position: absolute;
+  left: 20px;
+  right: 20px;
+  bottom: max(10px, env(safe-area-inset-bottom, 0px));
+}
+
+.chat-page .glass-card {
+  z-index: 2;
+}
+
 .hero {
   display: flex;
   flex-direction: column;
   gap: 12px;
-  padding: 12px 4px 8px;
+  padding: 4px 4px;
 }
 
 .hero-heading {
@@ -44,7 +87,7 @@ body {
   background: linear-gradient(110deg, #fff, #8b7cff 55%, #55d6be);
   background-clip: text;
   color: transparent;
-  font-size: clamp(3rem, 9vw, 5.5rem);
+  font-size: clamp(2rem, 6vw, 3.5rem);
   font-weight: 700;
   letter-spacing: -0.08em;
   padding-right: 0.1em;
@@ -130,5 +173,15 @@ body {
 @media (max-width: 640px) {
   .page {
     padding: 28px 14px 56px;
+  }
+
+  .chat-page {
+    padding: 10px 14px 0;
+  }
+
+  .chat-page .composer {
+    left: 14px;
+    right: 14px;
+    bottom: max(8px, env(safe-area-inset-bottom, 0px));
   }
 }
