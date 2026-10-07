@@ -35,9 +35,12 @@ export function ChatFeed({
 }: ChatFeedProps) {
   const t = useTranslate();
   const previousCountRef = useRef(0);
+  const scrollRef = useRef<HTMLDivElement | null>(null);
 
   useEffect(() => {
-    window.scrollTo({ top: document.documentElement.scrollHeight });
+    const el = scrollRef.current;
+    if (!el) return;
+    el.scrollTo({ top: el.scrollHeight });
   }, []);
 
   useEffect(() => {
@@ -46,13 +49,14 @@ export function ChatFeed({
     const previousCount = previousCountRef.current;
     previousCountRef.current = count;
     if (previousCount >= count) return;
+    const el = scrollRef.current;
+    if (!el) return;
     const stickToBottom =
-      window.innerHeight + window.scrollY >=
-      document.documentElement.scrollHeight - SCROLL_STICK_OFFSET;
+      el.scrollTop + el.clientHeight >= el.scrollHeight - SCROLL_STICK_OFFSET;
     if (!mine && !stickToBottom) return;
     const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-    window.scrollTo({
-      top: document.documentElement.scrollHeight,
+    el.scrollTo({
+      top: el.scrollHeight,
       behavior: reduceMotion ? "auto" : "smooth",
     });
   }, [messages.length, mine]);
@@ -67,42 +71,50 @@ export function ChatFeed({
     );
   }
   return (
-    <Stack className="feed" spacing={1.5}>
-      {messages.map((message) => (
-        <Paper
-          key={message.id}
-          className={`message ${mine ? "mine" : ""}`}
-        >
-          <Typography
-            className="message-time"
-            variant="caption"
-            color="text.secondary"
+    <Box ref={scrollRef} className="chat-scroll">
+      <Stack className="feed" spacing={1.5}>
+        {messages.map((message) => (
+          <Box
+            key={message.id}
+            className={`message-row ${mine ? "mine" : ""}`}
           >
-            {new Date(message.at).toLocaleTimeString([], {
-              hour: "2-digit",
-              minute: "2-digit",
-              hour12: false,
-            })}
-          </Typography>
-          {message.kind === "text" ? (
-            <CopyMessageButton text={message.text}>
-              <Typography>{renderText(message.text)}</Typography>
-            </CopyMessageButton>
-          ) : (
-            <FileBubble
-              message={message}
-              onRequest={onFileRequest}
-              progress={fileProgress?.[message.id]}
-              disabled={filesDisabled}
-            />
-          )}
-        </Paper>
-      ))}
-    </Stack>
+            {mine && message.kind === "text" && (
+              <CopyMessageButton text={message.text} />
+            )}
+            <Paper className={`message ${mine ? "mine" : ""}`}>
+              <Typography
+                className="message-time"
+                variant="caption"
+                color="text.secondary"
+              >
+                {new Date(message.at).toLocaleTimeString([], {
+                  hour: "2-digit",
+                  minute: "2-digit",
+                  hour12: false,
+                })}
+              </Typography>
+              {message.kind === "text" ? (
+                <Typography>{renderText(message.text)}</Typography>
+              ) : (
+                <FileBubble
+                  message={message}
+                  onRequest={onFileRequest}
+                  progress={fileProgress?.[message.id]}
+                  disabled={filesDisabled}
+                />
+              )}
+            </Paper>
+            {!mine && message.kind === "text" && (
+              <CopyMessageButton text={message.text} />
+            )}
+          </Box>
+        ))}
+      </Stack>
+    </Box>
   );
 }
 
-function CopyMessageButton({ text, children }: { text: string; children: React.ReactNode }) {
+function CopyMessageButton({ text }: { text: string }) {
   const t = useTranslate();
   const [copied, setCopied] = useState(false);
 
@@ -130,22 +142,16 @@ function CopyMessageButton({ text, children }: { text: string; children: React.R
   }
 
   return (
-    <>
-      <Tooltip title={copied ? t("copiedMsg") : t("copyMsg")}>
-        <IconButton
-          className="message-copy"
-          size="small"
-          aria-label={t("copyMsg")}
-          onClick={(event) => {
-            event.stopPropagation();
-            copy();
-          }}
-        >
-          {copied ? <Check fontSize="small" /> : <ContentCopy fontSize="small" />}
-        </IconButton>
-      </Tooltip>
-      {children}
-    </>
+    <IconButton
+      className="message-copy"
+      aria-label={t("copyMsg")}
+      onClick={(event) => {
+        event.stopPropagation();
+        copy();
+      }}
+    >
+      {copied ? <Check /> : <ContentCopy />}
+    </IconButton>
   );
 }
 
